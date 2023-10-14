@@ -3,38 +3,28 @@ import matplotlib.pyplot as plt
 minimumloon = 1934.40 # per maand
 rente = 2.56
 
-def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool, partnerloon = 0):
+def SF35(schuld: float, loon: float, alleenstaand: bool, kinderen: bool, partnerloon = 0):
     """
-    Je aflosfase is maximaal 35 jaar.
-    Er wordt standaard rekening gehouden met je draagkracht.
-    Van je inkomen wordt een draagkrachtvrije voet afgehaald. 
-    Het inkomen van je partner telt altijd mee bij de berekening van je draagkracht.
-    Je hoeft nooit meer dan 4% van je inkomen boven de draagkrachtvrije voet te betalen.
-    De draagkrachtvrije voet is een percentage van het minimumloon en is afhankelijk
-    van je persoonlijke situatie. Ben je alleenstaand zonder kinderen, dan is de
-    draagkrachtvrije voet 100% van het minimumloon. In alle andere gevallen is het 143%.
-
-    Bij minimaal 5 euro per maand terug betalen
-
-    Rente is op jaarbasis
-
-
+    Studieschuld berekenen volgens SF35 regeling. 
     """
     inkomen = loon
     beginschuld = schuld
 
     # Bent u alleenstaand zonder kinderen, dan is de draagkrachtvrije voet 100% van het minimumloon.
-    # # In alle andere gevallen is het 143%.
-
     if (alleenstaand and not kinderen): 
         draagkrachtvrijevoet = 1
+
+    # In alle andere gevallen is het 143%.
     else: 
         draagkrachtvrijevoet = 1.43
+
+        # Het inkomen van je partner telt altijd mee bij de berekening van je draagkracht.
         if (not alleenstaand):
             inkomen += partnerloon
 
     draagkrachtvrijevoet = draagkrachtvrijevoet * minimumloon
 
+    # Van je inkomen wordt een draagkrachtvrije voet afgehaald. 
     # U hoeft nooit meer dan 4% van uw inkomen boven de draagkrachtvrije voet te betalen. 
     draagkracht = 0.04 * (inkomen - draagkrachtvrijevoet)
 
@@ -47,7 +37,10 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
     renteloos = []
     betaald = 0
 
+    # De aflosfase is maximaal 35 jaar.
     for jaar in range(1,36):
+
+        # Rente is op jaarbasis.
         jaarrente = schuld * (rente/100)
         schuld += jaarrente
         
@@ -60,11 +53,10 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
                 afbetaald.append(betaald)
                 renteloos.append(beginschuld-betaald)
 
-
-    y = list(range(1,len(studieschuld)+1))
-
+    # GRAFIEK
     plt.figure(figsize=(10,5))
     plt.title("Studieschuld van "+str(beginschuld)+" met maandelijks inkomen van "+str(inkomen)+", "+str(draagkracht)+" draagkracht")
+    y = list(range(1,len(studieschuld)+1))
 
     # Plots
     plt.plot(y, studieschuld, color='red', label='studieschuld')
@@ -83,5 +75,5 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
     return schuld
 
 # Voorbeeld van een schuld van 90.000, maandelijkse inkomsten 3000, alleenstaand zonder kinderen
-bereken = Studieschuld(90000, 3000, True, False)
+bereken = SF35(15000, 3000, True, False)
 print(bereken)
