@@ -34,8 +34,6 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
             inkomen += partnerloon
 
     draagkrachtvrijevoet = draagkrachtvrijevoet * minimumloon
-    print(draagkrachtvrijevoet)
-    print(inkomen - draagkrachtvrijevoet)
 
     # U hoeft nooit meer dan 4% van uw inkomen boven de draagkrachtvrije voet te betalen. 
     draagkracht = 0.04 * (inkomen - draagkrachtvrijevoet)
@@ -44,18 +42,13 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
     if draagkracht < 5:
         draagkracht = 0
 
-    print(draagkracht)
-
     studieschuld = []
     afbetaald = []
     renteloos = []
     betaald = 0
 
     for jaar in range(1,36):
-        print("jaar ", jaar)
-        print("schuld: ", schuld)
         jaarrente = schuld * (rente/100)
-        print("jaarrente: ", jaarrente)
         schuld += jaarrente
         
         for maand in range(1,13):
@@ -65,48 +58,30 @@ def Studieschuld(schuld: float, loon: float, alleenstaand: bool, kinderen: bool,
 
                 betaald += draagkracht
                 afbetaald.append(betaald)
-
                 renteloos.append(beginschuld-betaald)
 
-                print("schuld: ", schuld)
-
-    print(studieschuld)
 
     y = list(range(1,len(studieschuld)+1))
 
     plt.figure(figsize=(10,5))
     plt.title("Studieschuld van "+str(beginschuld)+" met maandelijks inkomen van "+str(inkomen)+", "+str(draagkracht)+" draagkracht")
 
+    # Plots
     plt.plot(y, studieschuld, color='red', label='studieschuld')
     plt.plot(y, afbetaald, color='green', label='afbetaald')
     plt.plot(y, renteloos, color='blue', label='renteloze schuld')
 
+    # Ticks als jaar
+    aantaljaar =  [j for j in y if j % 12 == 0]
+    plt.xticks(aantaljaar, list(range(1,len(aantaljaar)+1)))
     plt.xlabel('Jaar')
     plt.ylabel('€')
-
-    aantaljaar =  [j for j in y if j % 12 == 0]
-    print(aantaljaar)
-
-    plt.xticks(aantaljaar, list(range(1,len(aantaljaar)+1)))
-
-
     plt.ylim(0, max(studieschuld))
-
-    #plt.text(-10,-30, "maandinkomen: "+str(inkomen), ha="center")
-    # afbetalen per maand
-
     plt.legend()
     plt.show()
 
-
-
     return schuld
 
-
-
-
-
-#schuld = Studieschuld(90000, 3000, True, False)
-schuld = Studieschuld(90000, 3000, True, False)
-
-print(schuld)
+# Voorbeeld van een schuld van 90.000, maandelijkse inkomsten 3000, alleenstaand zonder kinderen
+bereken = Studieschuld(90000, 3000, True, False)
+print(bereken)
